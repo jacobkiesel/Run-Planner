@@ -1,0 +1,55 @@
+html {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.336), rgba(0, 0, 0, 0.171)),
+    url(gantas-vaiciulenas-qiadYggIU5w-unsplash.jpg);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  height: 100vh;
+  font-family: "Poppins", sans-serif;
+}
+.shell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.places {
+  display: flex;
+  justify-content: center;
+  margin-top: 100px;
+}
+.places input,
+.gps {
+  background: white;
+  border-style: none;
+  padding: 15px;
+  margin: 10px;
+  font-size: 1em;
+  border-radius: 15px 0;
+  box-shadow: 2px 2px 4px black;
+}
+
+.container {
+  display: grid;
+  width: 60%;
+  grid-template-columns: 3fr 1fr;
+}
+.display {
+  margin-top: 5vh;
+  color: white;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  text-shadow: 2px 2px 4px black;
+}
+.display h1 {
+  font-style: italic;
+  font-weight: 400;
+  font-size: 4em;
+}
+#map {
+  height: 400px;
+  width: 400px;
+  margin: 70px;
+  border-radius: 20px 0;
+}
