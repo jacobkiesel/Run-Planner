@@ -14,8 +14,6 @@ input.addEventListener("keypress", setQuery);
 function setQuery(event) {
   if (event.keyCode == 13) {
     getData(input.value);
-
-    console.log(input.value);
   }
 }
 
