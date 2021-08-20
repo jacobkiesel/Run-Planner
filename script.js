@@ -5,6 +5,7 @@ const display = document.querySelector(".display");
 const map = document.querySelector("#map");
 const mapContainer = document.querySelector(".map-container");
 const reset = document.querySelector(".reset");
+let getLog = [];
 // let coords;
 // navigator.geolocation.getCurrentPosition((position) => {
 //   let coords = [position.coords.latitude, position.coords.longitude];
@@ -38,15 +39,15 @@ const getData = async function (city) {
   displayResults(data);
 };
 
-const displayResults = function (weather) {
-  const now = new Date();
-  const options = {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  };
+const options = {
+  weekday: "long",
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+};
+const now = new Date();
 
+const displayResults = function (weather) {
   display.innerHTML = `
   <h2 class="location">${weather.name}</h2>
   <h3 class="date">${now.toLocaleDateString("en-US", options)}</h3>
@@ -78,6 +79,13 @@ const displayResults = function (weather) {
   };
   L.control.polylineMeasure(mapOptions).addTo(map);
   map.on("polylinemeasure:finish", (currentLine) => {
-    console.log(currentLine);
+    const log = {
+      distance: (currentLine.distance * 0.000621).toFixed(2),
+      date: now.toLocaleDateString("en-US", options),
+      latitude: weather.coord.lat,
+      longitute: weather.coord.lon,
+    };
+    localStorage.setItem(log, JSON.stringify(log));
+    return getLog.unshift(localStorage.getItem(log));
   });
 };
