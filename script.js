@@ -2,6 +2,9 @@
 
 const input = document.getElementById("city");
 const display = document.querySelector(".display");
+const map = document.querySelector("#map");
+const mapContainer = document.querySelector(".map-container");
+const reset = document.querySelector(".reset");
 // let coords;
 // navigator.geolocation.getCurrentPosition((position) => {
 //   let coords = [position.coords.latitude, position.coords.longitude];
@@ -11,24 +14,31 @@ const display = document.querySelector(".display");
 
 input.addEventListener("keypress", setQuery);
 
+const clear = function () {
+  display.innerHTML = "";
+  mapContainer.innerHTML = `<div id="map"></div>`;
+  map.remove();
+};
+
+reset.addEventListener("click", function () {
+  clear();
+});
+
 function setQuery(event) {
   if (event.keyCode == 13) {
+    mapContainer.innerHTML = `<div id="map"></div>`;
     getData(input.value);
   }
 }
-
-const clear = () => (display.innerHTML = "");
 
 const getData = async function (city) {
   const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&appid=3f3276c1b27dd09beafc7d957a95f2d5`;
   const res = await fetch(url);
   const data = await res.json();
-  console.log(data);
   displayResults(data);
 };
 
 const displayResults = function (weather) {
-  clear();
   const now = new Date();
   const options = {
     weekday: "long",
@@ -62,4 +72,12 @@ const displayResults = function (weather) {
         "pk.eyJ1IjoiamFjb2JraWVzZWwiLCJhIjoiY2tzaml3aWRvMTFrYTMxbnNnbXB3OW84NiJ9.QbxODbYekVtngTWDsKICTQ",
     }
   ).addTo(map);
+  const mapOptions = {
+    unit: "landmiles",
+    measureControlLabel: `🏃‍♂️`,
+  };
+  L.control.polylineMeasure(mapOptions).addTo(map);
+  map.on("polylinemeasure:finish", (currentLine) => {
+    console.log(currentLine);
+  });
 };
