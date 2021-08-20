@@ -5,7 +5,11 @@ const display = document.querySelector(".display");
 const map = document.querySelector("#map");
 const mapContainer = document.querySelector(".map-container");
 const reset = document.querySelector(".reset");
-let getLog = [];
+const workoutDisplay = document.querySelector(".workout-list");
+const workoutDescription = document.querySelector(".modal");
+
+const getLog = [];
+
 // let coords;
 // navigator.geolocation.getCurrentPosition((position) => {
 //   let coords = [position.coords.latitude, position.coords.longitude];
@@ -19,6 +23,18 @@ const clear = function () {
   display.innerHTML = "";
   mapContainer.innerHTML = `<div id="map"></div>`;
   map.remove();
+};
+
+const populateModal = function (weather, currentLine) {
+  workoutDescription.innerHTML = `
+  <p class="date">Date: ${now.toLocaleDateString("en-US", options)}</p>
+  <p class="distance">Distance: ${(currentLine.distance * 0.000621).toFixed(
+    2
+  )}</p>
+  <p class="weather">Temperature: ${weather.main.temp}</p>
+  <input type="text" class="time" placeholder="Time in minutes">
+  <button id="add">Save</button>
+  `;
 };
 
 reset.addEventListener("click", function () {
@@ -77,15 +93,61 @@ const displayResults = function (weather) {
     unit: "landmiles",
     measureControlLabel: `🏃‍♂️`,
   };
+
   L.control.polylineMeasure(mapOptions).addTo(map);
   map.on("polylinemeasure:finish", (currentLine) => {
-    const log = {
-      distance: (currentLine.distance * 0.000621).toFixed(2),
-      date: now.toLocaleDateString("en-US", options),
-      latitude: weather.coord.lat,
-      longitute: weather.coord.lon,
-    };
-    localStorage.setItem(log, JSON.stringify(log));
-    return getLog.unshift(localStorage.getItem(log));
+    workoutDescription.classList.remove("hidden");
+    populateModal(weather, currentLine);
+    const add = document.getElementById("add");
+    add.addEventListener("click", function () {
+      saveLog(weather, currentLine);
+      workoutDescription.innerHTML = ``;
+    });
   });
 };
+
+const saveLog = function (weather, currentLine) {
+  const timeRan = document.querySelector(".time");
+  const log = {
+    distance: (currentLine.distance * 0.000621).toFixed(2),
+    date: now.toLocaleDateString("en-US", options),
+    temp: weather.main.temp,
+    time: timeRan.value,
+    pace: (
+      timeRan.value / (currentLine.distance * 0.000621).toFixed(2)
+    ).toFixed(2),
+  };
+  localStorage.setItem(localStorage.length, JSON.stringify(log));
+  getLog.unshift(log);
+};
+
+const generateLog = function () {
+  for (const log in localStorage) {
+    getLog.unshift(JSON.parse(localStorage.getItem(log)));
+  }
+};
+
+const generateList = function (log) {
+  console.log(log);
+  log.forEach((log) => {
+    if (log != null) {
+      workoutDisplay.insertAdjacentHTML(
+        "afterbegin",
+        `<li>
+      <p>📆: ${log.date}</p>
+      <p>🛣: ${log.distance} miles</p>
+      <p>⛅️: ${log.temp}°F</p>
+      <p>🕰: ${log.time} Minutes</p>
+      <p>⏱: ${log.pace} mph</p>
+    </li>`
+      );
+    }
+  });
+};
+
+const init = function () {
+  generateLog();
+  generateList(getLog);
+};
+
+init();
