@@ -23,24 +23,19 @@
     <title>Runners Log</title>
   </head>
   <body>
-    <div class="modal hidden">
-      <!-- <p class="date"></p>
-      <p class="distance"></p>
-      <p class="weather"></p>
-      <input type="text" class="time" placeholder="How long were you running?">
-      <button class="add">Add</button> -->
-    </div>
     <ul class="workout-list"></ul>
     <div class="places">
-      <input id="city" type="text" placeholder="city" />
+      <input id="city" type="text" placeholder="enter city to start" />
+      <button class="add-manual">Manual Add</button>
       <button class="reset">Reset</button>
     </div>
+    <div class="modal-shell"><div class="modal hidden"></div></div>
     <div class="shell">
       <div class="container">
         <div class="display"></div>
         <div class="map-container"><div id="map">
+        </div>
       </div>
-    </div>
     <script defer src="script.js"></script>
     <script
       defer

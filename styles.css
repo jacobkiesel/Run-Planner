@@ -1,3 +1,9 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 html {
   background-image: linear-gradient(rgba(0, 0, 0, 0.336), rgba(0, 0, 0, 0.171)),
     url(gantas-vaiciulenas-qiadYggIU5w-unsplash.jpg);
@@ -8,18 +14,70 @@ html {
   height: 100vh;
   font-family: "Poppins", sans-serif;
 }
+.modal-shell {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  z-index: 0;
+  display: flex;
+  /* justify-content: center; */
+  align-items: center;
+}
+.modal {
+  margin-left: 60vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: blanchedalmond;
+  height: 50vh;
+  width: 50vh;
+  border-radius: 30px 0;
+  text-align: left;
+  box-shadow: 0 0 0 10000px rgba(0, 0, 0, 0.699);
+}
+.time,
+.man-date,
+.man-distance,
+.man-temp,
+.man-time {
+  background: transparent;
+
+  border: transparent;
+  border-bottom: 1px solid black;
+}
+#add,
+.manual-save {
+  background: white;
+  border-style: none;
+  padding: 9px;
+  margin-top: 10px;
+  font-size: 1em;
+  border-radius: 15px 0;
+  box-shadow: 2px 2px 4px black;
+}
+#add:hover,
+.manual-save:hover {
+  background: greenyellow;
+}
+.hidden {
+  display: none;
+}
 .shell {
+  z-index: 100;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 .places {
-  display: flex;
-  justify-content: center;
-  margin-top: 100px;
+  z-index: 1000;
+  position: fixed;
+  left: 45vw;
 }
 .places input,
-.reset {
+.reset,
+.add-manual {
   background: white;
   border-style: none;
   padding: 15px;
@@ -28,21 +86,47 @@ html {
   border-radius: 15px 0;
   box-shadow: 2px 2px 4px black;
 }
+.add-manual {
+  background: rgb(107, 175, 6);
+  color: white;
+}
+.add-manual:hover {
+  background: rgb(37, 61, 0);
+}
 .reset {
   background-color: rgba(175, 40, 40, 0.377);
   color: white;
 }
-
+.reset:hover {
+  background: rgb(54, 3, 3);
+}
+.workout-list {
+  z-index: 100;
+  position: fixed;
+  left: 0;
+  height: 100vh;
+  width: 300px;
+  background-color: blanchedalmond;
+  padding: 20px;
+  overflow: scroll;
+  list-style: none;
+}
+.workout-list li {
+  padding: 15px;
+  margin: 10px;
+  background: honeydew;
+  border-radius: 20px 0;
+  box-shadow: 1px 1px 10px black;
+}
 .container {
   display: grid;
   width: 60%;
   grid-template-columns: 3fr 1fr;
 }
 .display {
-  margin-top: 5vh;
   color: white;
   border-radius: 10px;
-  padding: 20px;
+  padding: 100px;
   text-align: center;
   text-shadow: 2px 2px 4px black;
 }

@@ -8,6 +8,8 @@ const reset = document.querySelector(".reset");
 const workoutDisplay = document.querySelector(".workout-list");
 const workoutDescription = document.querySelector(".modal");
 
+const manualAdd = document.querySelector(".add-manual");
+
 const getLog = [];
 
 // let coords;
@@ -18,6 +20,55 @@ const getLog = [];
 // console.log(coords);
 
 input.addEventListener("keypress", setQuery);
+manualAdd.addEventListener("click", function () {
+  workoutDescription.classList.toggle("hidden");
+  populateModalManual();
+  const manualSave = document.querySelector(".manual-save");
+  manualSave.addEventListener("click", function () {
+    saveManualLog();
+
+    workoutDescription.classList.toggle("hidden");
+  });
+});
+
+const pushToList = function (log) {
+  workoutDisplay.insertAdjacentHTML(
+    "afterbegin",
+    `<li>
+  <p>📆: ${log.date}</p>
+  <p>🛣: ${log.distance} miles</p>
+  <p>🌡: ${log.temp}°F</p>
+  <p>🕰: ${log.time} Minutes</p>
+  <p>⏱: ${log.pace} mph</p>
+</li>`
+  );
+};
+
+const populateModalManual = function () {
+  workoutDescription.innerHTML = `
+  <div><div class ="labels"><label for="date">📆: </label> <input type="text" class="man-date" name="date" placeholder="Date"></div>
+  <div class ="labels"><label for="distance">🛣: </label> <input type="text" class="man-distance" name="distance" placeholder="Distance (miles)"></div>
+  <div class ="labels"> <label for="temp">🌡: </label> <input type="text" class="man-temp" name="temp" placeholder="Temperature °F"></div>
+  <div class ="labels"><label for="time">⏱: </label> <input type="text" class="man-time" name="time" placeholder="Time (minutes)"></div>
+  <button class="manual-save">Save</button></div>
+  `;
+};
+
+const saveManualLog = function () {
+  const manualDate = document.querySelector(".man-date");
+  const manualDistance = document.querySelector(".man-distance");
+  const manualTemp = document.querySelector(".man-temp");
+  const manualTime = document.querySelector(".man-time");
+  const log = {
+    distance: manualDistance.value,
+    date: manualDate.value,
+    temp: manualTemp.value,
+    time: manualTime.value,
+    pace: manualDistance.value / manualTime.value,
+  };
+  localStorage.setItem(localStorage.length, JSON.stringify(log));
+  pushToList(log);
+};
 
 const clear = function () {
   display.innerHTML = "";
@@ -27,13 +78,15 @@ const clear = function () {
 
 const populateModal = function (weather, currentLine) {
   workoutDescription.innerHTML = `
-  <p class="date">Date: ${now.toLocaleDateString("en-US", options)}</p>
-  <p class="distance">Distance: ${(currentLine.distance * 0.000621).toFixed(
+  <div><p class="date">📆: ${now.toLocaleDateString("en-US", options)}</p>
+  <p class="distance">🛣: ${(currentLine.distance * 0.000621).toFixed(
     2
-  )}</p>
-  <p class="weather">Temperature: ${weather.main.temp}</p>
-  <input type="text" class="time" placeholder="Time in minutes">
+  )} miles</p>
+  <p class="weather">🌡: ${weather.main.temp}°F</p>
+  <label for="time">⏱: </label> <input type="text" name="time" class="time" placeholder="Time in minutes">
+  <br />
   <button id="add">Save</button>
+  </div>
   `;
 };
 
@@ -96,12 +149,13 @@ const displayResults = function (weather) {
 
   L.control.polylineMeasure(mapOptions).addTo(map);
   map.on("polylinemeasure:finish", (currentLine) => {
-    workoutDescription.classList.remove("hidden");
+    workoutDescription.classList.toggle("hidden");
     populateModal(weather, currentLine);
     const add = document.getElementById("add");
     add.addEventListener("click", function () {
       saveLog(weather, currentLine);
       workoutDescription.innerHTML = ``;
+      workoutDescription.classList.toggle("hidden");
     });
   });
 };
@@ -118,7 +172,7 @@ const saveLog = function (weather, currentLine) {
     ).toFixed(2),
   };
   localStorage.setItem(localStorage.length, JSON.stringify(log));
-  getLog.unshift(log);
+  pushToList(log);
 };
 
 const generateLog = function () {
@@ -131,16 +185,7 @@ const generateList = function (log) {
   console.log(log);
   log.forEach((log) => {
     if (log != null) {
-      workoutDisplay.insertAdjacentHTML(
-        "afterbegin",
-        `<li>
-      <p>📆: ${log.date}</p>
-      <p>🛣: ${log.distance} miles</p>
-      <p>⛅️: ${log.temp}°F</p>
-      <p>🕰: ${log.time} Minutes</p>
-      <p>⏱: ${log.pace} mph</p>
-    </li>`
-      );
+      pushToList(log);
     }
   });
 };
