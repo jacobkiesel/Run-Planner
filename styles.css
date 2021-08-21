@@ -108,7 +108,7 @@ html {
   width: 300px;
   background-color: blanchedalmond;
   padding: 20px;
-  overflow: scroll;
+  overflow: overlay;
   list-style: none;
 }
 .workout-list li {

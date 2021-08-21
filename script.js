@@ -12,6 +12,13 @@ const manualAdd = document.querySelector(".add-manual");
 
 const getLog = [];
 
+window.addEventListener("keydown", function (e) {
+  if (e.key === "Escape") {
+    workoutDescription.innerHTML = "";
+    workoutDescription.classList.add("hidden");
+  }
+});
+
 // let coords;
 // navigator.geolocation.getCurrentPosition((position) => {
 //   let coords = [position.coords.latitude, position.coords.longitude];
