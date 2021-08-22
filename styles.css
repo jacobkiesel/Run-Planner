@@ -14,15 +14,6 @@ html {
   height: 100vh;
   font-family: "Poppins", sans-serif;
 }
-/* .modal-shell {
-  position: fixed;
-  height: 100%;
-  width: 100%;
-  z-index: 10;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-} */
 .modal {
   position: fixed;
   top: 50%;
@@ -46,10 +37,10 @@ html {
 .man-temp,
 .man-time {
   background: transparent;
-
   border: transparent;
   border-bottom: 1px solid black;
 }
+
 #add,
 .manual-save {
   background: white;
@@ -84,7 +75,8 @@ html {
 .reset,
 .add-manual,
 .clear,
-.delete {
+.delete,
+.show {
   background: white;
   border-style: none;
   padding: 15px;
@@ -93,11 +85,16 @@ html {
   border-radius: 15px 0;
   box-shadow: 2px 2px 4px black;
 }
-.add-manual {
+.add-manual,
+.show {
   background: rgb(107, 175, 6);
   color: white;
 }
-.add-manual:hover {
+.show {
+  display: none;
+}
+.add-manual:hover,
+.show:hover {
   background: rgb(37, 61, 0);
 }
 .reset,
@@ -120,7 +117,7 @@ html {
   overflow: overlay;
   list-style: none;
 }
-.workout-list li {
+.workout-list div {
   padding: 15px;
   margin: 10px;
   background: honeydew;
@@ -128,13 +125,11 @@ html {
   box-shadow: 1px 1px 10px black;
 }
 .container {
-  display: grid;
+  display: flex;
   width: 60%;
-  grid-template-columns: 3fr 1fr;
 }
 .display {
   color: white;
-  border-radius: 10px;
   padding: 100px;
   text-align: center;
   text-shadow: 2px 2px 4px black;
@@ -154,4 +149,31 @@ html {
 #polyline-measure-control {
   font-size: 2em;
   text-shadow: 1px 1px 2px black;
+}
+@media screen and (max-width: 800px) {
+  .container {
+    width: 100vw;
+    height: 100vw;
+    display: flex;
+    flex-direction: column;
+  }
+  .hide {
+    opacity: 0;
+  }
+  .show {
+    display: unset;
+  }
+  .workout-list {
+    position: fixed;
+    bottom: 0;
+    width: 100vw;
+    height: 80vh;
+    display: flexbox;
+    overflow: scroll;
+  }
+  .workout-list div {
+    width: 250px;
+    height: 250px;
+    margin: 10px auto;
+  }
 }

@@ -9,6 +9,7 @@ const workoutDisplay = document.querySelector(".workout-list");
 const workoutDescription = document.querySelector(".modal");
 const clearBtn = document.querySelector(".clear");
 const manualAdd = document.querySelector(".add-manual");
+const toggleDisplayWorkouts = document.querySelector(".show");
 
 const getLog = [];
 let ID = Math.floor(Math.random() * 1000);
@@ -44,6 +45,9 @@ const getData = async function (city) {
 };
 
 // Event Listeners
+toggleDisplayWorkouts.addEventListener("click", function () {
+  workoutDisplay.classList.toggle("hide");
+});
 window.addEventListener("keydown", function (e) {
   if (e.key === "Escape") {
     workoutDescription.innerHTML = "";
@@ -145,7 +149,7 @@ const populateModal = function (weather, currentLine) {
 const pushToList = function (log) {
   workoutDisplay.insertAdjacentHTML(
     "afterbegin",
-    `<li>
+    `<div>
     <p>📆: ${log.date}</p>
     <p>🛣: ${log.distance} Miles</p>
     <p>🌡: ${log.temp}°F</p>
@@ -153,7 +157,7 @@ const pushToList = function (log) {
     <p>⏱: ${log.pace} Minute Mile</p>
     <div class= "id hidden">${log.id}</div>
   <button class="delete">Delete</button>
-</li>`
+</div>`
   );
 
   const deleteBtn = document.querySelector(".delete");
@@ -171,6 +175,8 @@ const displayResults = function (weather) {
   <p class="high-low">${weather.main.temp_min}°F / ${
     weather.main.temp_max
   }°F</p>
+  <br/>
+  <p> Click the running emoji on the map to begin!</p>
   `;
 
   const map = L.map("map").setView([weather.coord.lat, weather.coord.lon], 13);
