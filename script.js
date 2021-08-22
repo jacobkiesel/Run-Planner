@@ -202,9 +202,8 @@ const saveLog = function (weather, currentLine) {
     date: now.toLocaleDateString("en-US", options),
     temp: weather.main.temp,
     time: timeRan.value,
-    pace: (
-      timeRan.value / (currentLine.distance * 0.000621).toFixed(2)
-    ).toFixed(2),
+    pace:
+      (currentLine.distance * 0.000621).toFixed(2).toFixed(2) / timeRan.value,
     id: ID,
   };
   localStorage.setItem(localStorage.length, JSON.stringify(log));
