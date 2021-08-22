@@ -8,12 +8,58 @@ const reset = document.querySelector(".reset");
 const workoutDisplay = document.querySelector(".workout-list");
 const workoutDescription = document.querySelector(".modal");
 const clearBtn = document.querySelector(".clear");
-let ID = Math.floor(Math.random() * 1000);
-
 const manualAdd = document.querySelector(".add-manual");
 
 const getLog = [];
+let ID = Math.floor(Math.random() * 1000);
 
+const options = {
+  weekday: "long",
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+};
+const now = new Date();
+function setQuery(event) {
+  if (event.keyCode == 13) {
+    mapContainer.innerHTML = `<div id="map"></div>`;
+    getData(input.value);
+  }
+}
+const clear = function () {
+  display.innerHTML = "";
+  mapContainer.innerHTML = `<div id="map"></div>`;
+  map.remove();
+};
+const pushToList = function (log) {
+  workoutDisplay.insertAdjacentHTML(
+    "afterbegin",
+    `<li>
+    <p>📆: ${log.date}</p>
+    <p>🛣: ${log.distance} Miles</p>
+    <p>🌡: ${log.temp}°F</p>
+    <p>🕰: ${log.time} Minutes</p>
+    <p>⏱: ${log.pace} Minute Mile</p>
+    <div class= "id hidden">${log.id}</div>
+  <button class="delete">Delete</button>
+</li>`
+  );
+
+  const deleteBtn = document.querySelector(".delete");
+  deleteBtn.addEventListener("click", function (e) {
+    removeFromStorage(e.target.previousElementSibling);
+    deleteBtn.parentElement.remove();
+  });
+};
+
+const getData = async function (city) {
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&appid=3f3276c1b27dd09beafc7d957a95f2d5`;
+  const res = await fetch(url);
+  const data = await res.json();
+  displayResults(data);
+};
+
+// Event Listeners
 window.addEventListener("keydown", function (e) {
   if (e.key === "Escape") {
     workoutDescription.innerHTML = "";
@@ -31,33 +77,49 @@ manualAdd.addEventListener("click", function () {
     workoutDescription.classList.toggle("hidden");
   });
 });
-
 clearBtn.addEventListener("click", function () {
   localStorage.clear();
   workoutDisplay.innerHTML = "";
 });
+reset.addEventListener("click", function () {
+  clear();
+});
 
-const pushToList = function (log) {
-  workoutDisplay.insertAdjacentHTML(
-    "afterbegin",
-    `<li>
-    <p>📆: ${log.date}</p>
-    <p>🛣: ${log.distance} miles</p>
-    <p>🌡: ${log.temp}°F</p>
-    <p>🕰: ${log.time} Minutes</p>
-    <p>⏱: ${log.pace} mph</p>
-    <div class= "id hidden">${log.id}</div>
-  <button class="delete">Delete</button>
-</li>`
-  );
-
-  const deleteBtn = document.querySelector(".delete");
-  deleteBtn.addEventListener("click", function (e) {
-    removeFromStorage(e.target.previousElementSibling);
-    deleteBtn.parentElement.remove();
-  });
+// CRUD functions
+const saveLog = function (weather, currentLine) {
+  const timeRan = document.querySelector(".time");
+  const log = {
+    distance: (currentLine.distance * 0.000621).toFixed(2),
+    date: now.toLocaleDateString("en-US", options),
+    temp: weather.main.temp,
+    time: timeRan.value,
+    pace:
+      ((currentLine.distance * 0.000621).toFixed(2) / timeRan.value).toFixed(
+        2
+      ) * 10,
+    id: ID,
+  };
+  localStorage.setItem(localStorage.length, JSON.stringify(log));
+  getLog.unshift(log);
+  pushToList(log);
 };
-
+const saveManualLog = function () {
+  const manualDate = document.querySelector(".man-date");
+  const manualDistance = document.querySelector(".man-distance");
+  const manualTemp = document.querySelector(".man-temp");
+  const manualTime = document.querySelector(".man-time");
+  const log = {
+    distance: manualDistance.value,
+    date: manualDate.value,
+    temp: manualTemp.value,
+    time: manualTime.value,
+    pace: manualTime.value / manualDistance.value,
+    id: ID,
+  };
+  localStorage.setItem(localStorage.length, JSON.stringify(log));
+  getLog.unshift(log);
+  pushToList(log);
+};
 const removeFromStorage = function (id) {
   const value = id.innerHTML;
   localStorage.clear();
@@ -77,6 +139,7 @@ const removeFromStorage = function (id) {
   });
 };
 
+// HTML injectors
 const populateModalManual = function () {
   workoutDescription.innerHTML = `
   <div><div class ="labels"><label for="date">📆: </label> <input type="text" class="man-date" name="date" placeholder="Date"></div>
@@ -86,31 +149,6 @@ const populateModalManual = function () {
   <button class="manual-save">Save</button></div>
   `;
 };
-
-const saveManualLog = function () {
-  const manualDate = document.querySelector(".man-date");
-  const manualDistance = document.querySelector(".man-distance");
-  const manualTemp = document.querySelector(".man-temp");
-  const manualTime = document.querySelector(".man-time");
-  const log = {
-    distance: manualDistance.value,
-    date: manualDate.value,
-    temp: manualTemp.value,
-    time: manualTime.value,
-    pace: manualTime.value / manualDistance.value,
-    id: ID,
-  };
-  localStorage.setItem(localStorage.length, JSON.stringify(log));
-  getLog.unshift(log);
-  pushToList(log);
-};
-
-const clear = function () {
-  display.innerHTML = "";
-  mapContainer.innerHTML = `<div id="map"></div>`;
-  map.remove();
-};
-
 const populateModal = function (weather, currentLine) {
   workoutDescription.innerHTML = `
   <div><p class="date">📆: ${now.toLocaleDateString("en-US", options)}</p>
@@ -124,33 +162,6 @@ const populateModal = function (weather, currentLine) {
   </div>
   `;
 };
-
-reset.addEventListener("click", function () {
-  clear();
-});
-
-function setQuery(event) {
-  if (event.keyCode == 13) {
-    mapContainer.innerHTML = `<div id="map"></div>`;
-    getData(input.value);
-  }
-}
-
-const getData = async function (city) {
-  const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&appid=3f3276c1b27dd09beafc7d957a95f2d5`;
-  const res = await fetch(url);
-  const data = await res.json();
-  displayResults(data);
-};
-
-const options = {
-  weekday: "long",
-  year: "numeric",
-  month: "long",
-  day: "numeric",
-};
-const now = new Date();
-
 const displayResults = function (weather) {
   display.innerHTML = `
   <h2 class="location">${weather.name}</h2>
@@ -195,31 +206,14 @@ const displayResults = function (weather) {
   });
 };
 
-const saveLog = function (weather, currentLine) {
-  const timeRan = document.querySelector(".time");
-  const log = {
-    distance: (currentLine.distance * 0.000621).toFixed(2),
-    date: now.toLocaleDateString("en-US", options),
-    temp: weather.main.temp,
-    time: timeRan.value,
-    pace:
-      (currentLine.distance * 0.000621).toFixed(2).toFixed(2) / timeRan.value,
-    id: ID,
-  };
-  localStorage.setItem(localStorage.length, JSON.stringify(log));
-  getLog.unshift(log);
-  pushToList(log);
-};
-
+// JSON converters
 const generateLog = function () {
   for (const log in localStorage) {
     if (log === null) return;
     getLog.unshift(JSON.parse(localStorage.getItem(log)));
   }
 };
-
 const generateList = function (log) {
-  console.log(log);
   log.forEach((log) => {
     if (log !== null) {
       pushToList(log);
@@ -231,5 +225,4 @@ const init = function () {
   generateLog();
   generateList(getLog);
 };
-
 init();
