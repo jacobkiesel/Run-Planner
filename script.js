@@ -13,13 +13,17 @@ const manualAdd = document.querySelector(".add-manual");
 const getLog = [];
 let ID = Math.floor(Math.random() * 1000);
 
+const mapOptions = {
+  unit: "landmiles",
+  measureControlLabel: `🏃‍♂️`,
+};
+const now = new Date();
 const options = {
   weekday: "long",
   year: "numeric",
   month: "long",
   day: "numeric",
 };
-const now = new Date();
 function setQuery(event) {
   if (event.keyCode == 13) {
     mapContainer.innerHTML = `<div id="map"></div>`;
@@ -30,26 +34,6 @@ const clear = function () {
   display.innerHTML = "";
   mapContainer.innerHTML = `<div id="map"></div>`;
   map.remove();
-};
-const pushToList = function (log) {
-  workoutDisplay.insertAdjacentHTML(
-    "afterbegin",
-    `<li>
-    <p>📆: ${log.date}</p>
-    <p>🛣: ${log.distance} Miles</p>
-    <p>🌡: ${log.temp}°F</p>
-    <p>🕰: ${log.time} Minutes</p>
-    <p>⏱: ${log.pace} Minute Mile</p>
-    <div class= "id hidden">${log.id}</div>
-  <button class="delete">Delete</button>
-</li>`
-  );
-
-  const deleteBtn = document.querySelector(".delete");
-  deleteBtn.addEventListener("click", function (e) {
-    removeFromStorage(e.target.previousElementSibling);
-    deleteBtn.parentElement.remove();
-  });
 };
 
 const getData = async function (city) {
@@ -162,6 +146,26 @@ const populateModal = function (weather, currentLine) {
   </div>
   `;
 };
+const pushToList = function (log) {
+  workoutDisplay.insertAdjacentHTML(
+    "afterbegin",
+    `<li>
+    <p>📆: ${log.date}</p>
+    <p>🛣: ${log.distance} Miles</p>
+    <p>🌡: ${log.temp}°F</p>
+    <p>🕰: ${log.time} Minutes</p>
+    <p>⏱: ${log.pace} Minute Mile</p>
+    <div class= "id hidden">${log.id}</div>
+  <button class="delete">Delete</button>
+</li>`
+  );
+
+  const deleteBtn = document.querySelector(".delete");
+  deleteBtn.addEventListener("click", function (e) {
+    removeFromStorage(e.target.previousElementSibling);
+    deleteBtn.parentElement.remove();
+  });
+};
 const displayResults = function (weather) {
   display.innerHTML = `
   <h2 class="location">${weather.name}</h2>
@@ -188,10 +192,6 @@ const displayResults = function (weather) {
         "pk.eyJ1IjoiamFjb2JraWVzZWwiLCJhIjoiY2tzaml3aWRvMTFrYTMxbnNnbXB3OW84NiJ9.QbxODbYekVtngTWDsKICTQ",
     }
   ).addTo(map);
-  const mapOptions = {
-    unit: "landmiles",
-    measureControlLabel: `🏃‍♂️`,
-  };
 
   L.control.polylineMeasure(mapOptions).addTo(map);
   map.on("polylinemeasure:finish", (currentLine) => {
