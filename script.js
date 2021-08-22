@@ -7,6 +7,8 @@ const mapContainer = document.querySelector(".map-container");
 const reset = document.querySelector(".reset");
 const workoutDisplay = document.querySelector(".workout-list");
 const workoutDescription = document.querySelector(".modal");
+const clearBtn = document.querySelector(".clear");
+let ID = Math.floor(Math.random() * 1000);
 
 const manualAdd = document.querySelector(".add-manual");
 
@@ -18,14 +20,6 @@ window.addEventListener("keydown", function (e) {
     workoutDescription.classList.add("hidden");
   }
 });
-
-// let coords;
-// navigator.geolocation.getCurrentPosition((position) => {
-//   let coords = [position.coords.latitude, position.coords.longitude];
-//   return coords;
-// });
-// console.log(coords);
-
 input.addEventListener("keypress", setQuery);
 manualAdd.addEventListener("click", function () {
   workoutDescription.classList.toggle("hidden");
@@ -38,17 +32,49 @@ manualAdd.addEventListener("click", function () {
   });
 });
 
+clearBtn.addEventListener("click", function () {
+  localStorage.clear();
+  workoutDisplay.innerHTML = "";
+});
+
 const pushToList = function (log) {
   workoutDisplay.insertAdjacentHTML(
     "afterbegin",
     `<li>
-  <p>📆: ${log.date}</p>
-  <p>🛣: ${log.distance} miles</p>
-  <p>🌡: ${log.temp}°F</p>
-  <p>🕰: ${log.time} Minutes</p>
-  <p>⏱: ${log.pace} mph</p>
+    <p>📆: ${log.date}</p>
+    <p>🛣: ${log.distance} miles</p>
+    <p>🌡: ${log.temp}°F</p>
+    <p>🕰: ${log.time} Minutes</p>
+    <p>⏱: ${log.pace} mph</p>
+    <div class= "id hidden">${log.id}</div>
+  <button class="delete">Delete</button>
 </li>`
   );
+
+  const deleteBtn = document.querySelector(".delete");
+  deleteBtn.addEventListener("click", function (e) {
+    removeFromStorage(e.target.previousElementSibling);
+    deleteBtn.parentElement.remove();
+  });
+};
+
+const removeFromStorage = function (id) {
+  const value = id.innerHTML;
+  localStorage.clear();
+  getLog.forEach((log, i) => {
+    if (log === null) return;
+    else {
+      if (value == log.id) {
+        getLog.splice(i, 1);
+      } else {
+        return;
+      }
+    }
+  });
+  getLog.forEach((log) => {
+    if (log === null) return;
+    else localStorage.setItem(localStorage.lenght, JSON.stringify(log));
+  });
 };
 
 const populateModalManual = function () {
@@ -72,8 +98,10 @@ const saveManualLog = function () {
     temp: manualTemp.value,
     time: manualTime.value,
     pace: manualDistance.value / manualTime.value,
+    id: ID,
   };
   localStorage.setItem(localStorage.length, JSON.stringify(log));
+  getLog.unshift(log);
   pushToList(log);
 };
 
@@ -177,13 +205,16 @@ const saveLog = function (weather, currentLine) {
     pace: (
       timeRan.value / (currentLine.distance * 0.000621).toFixed(2)
     ).toFixed(2),
+    id: ID,
   };
   localStorage.setItem(localStorage.length, JSON.stringify(log));
+  getLog.unshift(log);
   pushToList(log);
 };
 
 const generateLog = function () {
   for (const log in localStorage) {
+    if (log === null) return;
     getLog.unshift(JSON.parse(localStorage.getItem(log)));
   }
 };
@@ -191,7 +222,7 @@ const generateLog = function () {
 const generateList = function (log) {
   console.log(log);
   log.forEach((log) => {
-    if (log != null) {
+    if (log !== null) {
       pushToList(log);
     }
   });
