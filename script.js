@@ -97,7 +97,7 @@ const saveManualLog = function () {
     date: manualDate.value,
     temp: manualTemp.value,
     time: manualTime.value,
-    pace: manualDistance.value / manualTime.value,
+    pace: manualTime.value / manualDistance.value,
     id: ID,
   };
   localStorage.setItem(localStorage.length, JSON.stringify(log));
