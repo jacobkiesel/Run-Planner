@@ -57,7 +57,6 @@ manualAdd.addEventListener("click", function () {
   const manualSave = document.querySelector(".manual-save");
   manualSave.addEventListener("click", function () {
     saveManualLog();
-
     workoutDescription.classList.toggle("hidden");
   });
 });
@@ -77,10 +76,7 @@ const saveLog = function (weather, currentLine) {
     date: now.toLocaleDateString("en-US", options),
     temp: weather.main.temp,
     time: timeRan.value,
-    pace:
-      ((currentLine.distance * 0.000621).toFixed(2) / timeRan.value).toFixed(
-        2
-      ) * 10,
+    pace: (timeRan.value / (currentLine.distance * 0.000621)).toFixed(2),
     id: ID,
   };
   localStorage.setItem(localStorage.length, JSON.stringify(log));
